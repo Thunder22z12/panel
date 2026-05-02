@@ -152,22 +152,29 @@ async def on_message(message):
         async def status_loop():
             while True:
                 for s in statuses:
-                    await client.change_presence(
-    activity=discord.Streaming(
-        name=s,
-        url="https://twitch.tv/yourchannel"
-    )
-)
-                    await asyncio.sleep(10000000000000)
+                    try:
+                        await client.change_presence(
+                            activity=discord.Streaming(
+                                name=s,
+                                url="https://twitch.tv/yourchannel"
+                            )
+                        )
+                        await asyncio.sleep(10)  # change every 10 sec
+                    except:
+                        await asyncio.sleep(5)
 
         status_task = client.loop.create_task(status_loop())
         await message.channel.send("Auto status ON")
 
+
     if content == ".status off":
+        global status_task
+
         if status_task:
             status_task.cancel()
-            await message.channel.send("Auto status OFF")
-
+            status_task = None
+    await message.channel.send("Auto status OFF")
+    
     # START SPAM
     if message.content.startswith(".spam"):
         spam_msg = message.content[6:]
@@ -176,7 +183,7 @@ async def on_message(message):
             while True:
                 try:
                     await message.channel.send(spam_msg)
-                    await asyncio.sleep(2)  # delay (change if you want)
+                    await asyncio.sleep(6)  # delay (change if you want)
                 except Exception as e:
                     print("Error:", e)
                     await asyncio.sleep(10)
