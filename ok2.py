@@ -143,7 +143,7 @@ async def on_message(message):
             name_task = None
             await message.channel.send("Stopped name cycling")
 
-    if content == ".status on":
+    if content == ".status":
         global status_task
 
         if status_task:
