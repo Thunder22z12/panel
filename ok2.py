@@ -143,7 +143,7 @@ async def on_message(message):
             name_task = None
             await message.channel.send("Stopped name cycling")
 
-    if content == ".status on":
+    if message.content == ".status on":
         global status_task
 
         if status_task:
@@ -167,13 +167,14 @@ async def on_message(message):
         await message.channel.send("Auto status ON")
 
 
-    if content == ".status off":
+    if message.content == ".status off":
         global status_task
 
         if status_task:
             status_task.cancel()
             status_task = None
-    await message.channel.send("Auto status OFF")
+            
+        await message.channel.send("Auto status OFF")
     
     # START SPAM
     if message.content.startswith(".spam"):
