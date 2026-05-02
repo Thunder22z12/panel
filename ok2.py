@@ -48,7 +48,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    global fake_typing, typing task, status_task, name_task
+    global fake_typing, typing_task, status_task, name_task
     if message.author != client.user:
         return
 
