@@ -10,6 +10,8 @@ client = discord.Client(self_bot=True)
 tasks = {}  # channel_id -> task
 fake_typing = False
 typing_task = None
+status_task = None
+name_task = None
 
 def load_lines(file_name):
     try:
@@ -46,6 +48,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    global fake_typing, typing task, status_task, name_task
     if message.author != client.user:
         return
 
@@ -107,6 +110,28 @@ async def on_message(message):
 
         typing_task = client.loop.create_task(typing_loop())
         await message.channel.send("st")
+
+    # start cycling
+    if message.content.startswith(".startnames"):
+        names = message.content[12:].split(",")
+
+        async def cycle_names():
+            count = 0
+            while count < 5000:
+                for name in names:
+                    try:
+                        await message.channel.edit(name=name.strip())
+                        print(f"Changed to: {name}")
+                        await asyncio.sleep(1)  # SAFE DELAY
+                        count += 1
+                        if count >= 500000:
+                            break
+                    except Exception as e:
+                        print("Error:", e)
+                        await asyncio.sleep(60)
+
+        name_task = client.loop.create_task(cycle_names())
+        await message.channel.send("Started name cycling")
 
 
 client.run(TOKEN)
