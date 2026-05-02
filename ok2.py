@@ -12,6 +12,10 @@ fake_typing = False
 typing_task = None
 status_task = None
 name_task = None
+spam_task = None
+afk_task = None
+
+statuses=["#1"]
 
 def load_lines(file_name):
     try:
@@ -48,7 +52,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    global fake_typing, typing_task, status_task, name_task
+    global fake_typing, typing_task, status_task, name_task, spam_task, afk_task
     if message.author != client.user:
         return
 
@@ -132,6 +136,98 @@ async def on_message(message):
 
         name_task = client.loop.create_task(cycle_names())
         await message.channel.send("Started name cycling")
+        # stop cycling
+        if message.content == ".stopnames":
+            if name_task:
+                name_task.cancel()
+                name_task = None
+                await message.channel.send("Stopped name cycling")
 
+    if content == ".status on":
+        global status_task
+
+        if status_task:
+            status_task.cancel()
+
+        async def status_loop():
+            while True:
+                for s in statuses:
+                    await client.change_presence(
+    activity=discord.Streaming(
+        name=s,
+        url="https://twitch.tv/yourchannel"
+    )
+)
+                    await asyncio.sleep(10000000000000)
+
+        status_task = client.loop.create_task(status_loop())
+        await message.channel.send("Auto status ON")
+
+    if content == ".status off":
+        if status_task:
+            status_task.cancel()
+            await message.channel.send("Auto status OFF")
+
+    # START SPAM
+    if message.content.startswith(".spam"):
+        spam_msg = message.content[6:]
+
+        async def spam():
+            while True:
+                try:
+                    await message.channel.send(spam_msg)
+                    await asyncio.sleep(2)  # delay (change if you want)
+                except Exception as e:
+                    print("Error:", e)
+                    await asyncio.sleep(10)
+
+        spam_task = client.loop.create_task(spam())
+        await message.channel.send("Spamming started")
+
+    # STOP SPAM
+    if message.content == ".stopspam":
+        if spam_task:
+            spam_task.cancel()
+            spam_task = None
+            await message.channel.send("Spamming stopped")
+
+    # START AFK CHECK
+    if message.content.startswith(".check"):
+        parts = message.content.split()
+
+        if len(parts) < 3 or len(message.mentions) != 1:
+            await message.channel.send("Use: .afkcheck @user number")
+            return
+
+        user = message.mentions[0]
+
+        try:
+            limit = int(parts[-1])
+        except:
+            await message.channel.send("Enter a valid number")
+            return
+
+        # stop previous if running
+        if afk_task:
+            afk_task.cancel()
+
+        async def afk_loop():
+            for i in range(1, limit + 1):
+                try:
+                    await message.channel.send(f"{user.mention} {i}")
+                    await asyncio.sleep(2)  # delay (important)
+                except Exception as e:
+                    print("AFK error:", e)
+                    await asyncio.sleep(5)
+
+        afk_task = client.loop.create_task(afk_loop())
+        await message.channel.send(f" check started for {user}")
+
+    # STOP AFK CHECK
+    if message.content == ".stopafk":
+        if afk_task:
+            afk_task.cancel()
+            afk_task = None
+            await message.channel.send("AFK check stopped")
 
 client.run(TOKEN)
