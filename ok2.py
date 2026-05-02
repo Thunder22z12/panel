@@ -136,12 +136,12 @@ async def on_message(message):
 
         name_task = client.loop.create_task(cycle_names())
         await message.channel.send("Started name cycling")
-        # stop cycling
-        if message.content == ".stopnames":
-            if name_task:
-                name_task.cancel()
-                name_task = None
-                await message.channel.send("Stopped name cycling")
+    
+    if message.content == ".stopnames":
+        if name_task:
+            name_task.cancel()
+            name_task = None
+            await message.channel.send("Stopped name cycling")
 
     if content == ".status on":
         global status_task
