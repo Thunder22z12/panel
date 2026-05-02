@@ -98,7 +98,7 @@ async def on_message(message):
             await message.channel.send("Usage: .stop <channel_id>")
 
 
-        if content == ".schedule":
+        if message.content.startswith == ".schedule":
             fake_typing = True
 
             async def typing_loop():
@@ -143,7 +143,7 @@ async def on_message(message):
             name_task = None
             await message.channel.send("Stopped name cycling")
 
-    if content == ".status":
+    if message.content.startswith(".status"):
         global status_task
 
         if status_task:
