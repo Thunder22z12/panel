@@ -9,7 +9,7 @@ client = discord.Client(self_bot=True)
 
 tasks = {}  # channel_id -> task
 fake_typing = False
-
+typing_task = None
 
 def load_lines(file_name):
     try:
