@@ -97,25 +97,8 @@ async def on_message(message):
         else:
             await message.channel.send("Usage: .stop <channel_id>")
 
-
-        if message.content.startswith == ".schedule":
-            fake_typing = True
-
-            async def typing_loop():
-                while fake_typing:
-                    try:
-                        await message.channel.trigger_typing()
-                        await asyncio.sleep(5)  # typing interval
-                    except:
-                        break
-
-        if typing_task:
-            typing_task.cancel()
-
-        typing_task = client.loop.create_task(typing_loop())
-        await message.channel.send("st")
-
     # start cycling
+
     if message.content.startswith(".startnames"):
         names = message.content[12:].split(",")
 
