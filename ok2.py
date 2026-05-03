@@ -98,7 +98,7 @@ async def on_message(message):
             await message.channel.send("Usage: .stop <channel_id>")
 
 
-        if message.content.startswith == ".schedule":
+        if message.content.startswith(".schedule"):
             fake_typing = True
 
             async def typing_loop():
