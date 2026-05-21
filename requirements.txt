@@ -1,2 +1,2 @@
 discord.py-self==2.0.1
-discord.py-self groq==0.11.0
+discord.py-self groq
